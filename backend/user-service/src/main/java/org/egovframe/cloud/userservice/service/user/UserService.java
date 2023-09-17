@@ -83,17 +83,17 @@ public class UserService extends AbstractService implements UserDetailsService {
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
     private String GOOGLE_CLIENT_ID;
 
-    /**
-     * 카카오 사용자 정보 URL
-     */
-    @Value("${spring.security.oauth2.client.provider.kakao.user-info-uri}")
-    private String KAKAO_USER_INFO_URI;
+//    /**
+//     * 카카오 사용자 정보 URL
+//     */
+//    @Value("${spring.security.oauth2.client.provider.kakao.user-info-uri}")
+//    private String KAKAO_USER_INFO_URI;
 
-    /**
-     * 네이버 사용자 정보 URL
-     */
-    @Value("${spring.security.oauth2.client.provider.naver.user-info-uri}")
-    private String NAVER_USER_INFO_URI;
+//    /**
+//     * 네이버 사용자 정보 URL
+//     */
+//    @Value("${spring.security.oauth2.client.provider.naver.user-info-uri}")
+//    private String NAVER_USER_INFO_URI;
 
     /**
      * REST Template
@@ -635,12 +635,12 @@ public class UserService extends AbstractService implements UserDetailsService {
             case "google":
                 social = getGoogleUserInfo(token);
                 break;
-            case "naver":
-                social = getNaverUserInfo(token);
-                break;
-            case "kakao":
-                social = getKakaoUserInfo(token);
-                break;
+//            case "naver":
+//                social = getNaverUserInfo(token);
+//                break;
+//            case "kakao":
+//                social = getKakaoUserInfo(token);
+//                break;
             default:
                 break;
         }
@@ -694,44 +694,44 @@ public class UserService extends AbstractService implements UserDetailsService {
      * @param token 토큰
      * @return String[] 네이버 사용자 정보
      */
-    private SocialUserResponseDto getNaverUserInfo(String token) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + token);
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
-
-        ResponseEntity<String> response = restTemplate.exchange(NAVER_USER_INFO_URI, HttpMethod.GET, request, String.class);
-
-        if (response.getBody() != null && !"".equals(response.getBody())) {
-            JsonElement element = JsonParser.parseString(response.getBody());
-            JsonObject object = element.getAsJsonObject();
-            log.info("naver oauth2: {}", object);
-
-            if (object.get("resultcode") != null && "00".equals(object.get("resultcode").getAsString())) {
-                JsonElement responseElement = object.get("response");
-
-                if (responseElement != null) {
-                    SocialUserResponseDto.SocialUserResponseDtoBuilder builder = SocialUserResponseDto.builder();
-
-                    if (responseElement.getAsJsonObject().get("id") != null && !"".equals(responseElement.getAsJsonObject().get("id").getAsString())) {
-                        builder.id(responseElement.getAsJsonObject().get("id").getAsString());
-                    }
-                    if (responseElement.getAsJsonObject().get("email") != null && !"".equals(responseElement.getAsJsonObject().get("email").getAsString())) {
-                        builder.email(responseElement.getAsJsonObject().get("email").getAsString());
-                    }
-                    if (responseElement.getAsJsonObject().get("name") != null && !"".equals(responseElement.getAsJsonObject().get("name").getAsString())) {
-                        builder.name(responseElement.getAsJsonObject().get("name").getAsString());
-                    }
-
-                    return builder.build();
-                }
-            }
-        }
-
-        return null;
-    }
+//    private SocialUserResponseDto getNaverUserInfo(String token) {
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.set("Authorization", "Bearer " + token);
+//        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+//
+//        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+//        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+//
+//        ResponseEntity<String> response = restTemplate.exchange(NAVER_USER_INFO_URI, HttpMethod.GET, request, String.class);
+//
+//        if (response.getBody() != null && !"".equals(response.getBody())) {
+//            JsonElement element = JsonParser.parseString(response.getBody());
+//            JsonObject object = element.getAsJsonObject();
+//            log.info("naver oauth2: {}", object);
+//
+//            if (object.get("resultcode") != null && "00".equals(object.get("resultcode").getAsString())) {
+//                JsonElement responseElement = object.get("response");
+//
+//                if (responseElement != null) {
+//                    SocialUserResponseDto.SocialUserResponseDtoBuilder builder = SocialUserResponseDto.builder();
+//
+//                    if (responseElement.getAsJsonObject().get("id") != null && !"".equals(responseElement.getAsJsonObject().get("id").getAsString())) {
+//                        builder.id(responseElement.getAsJsonObject().get("id").getAsString());
+//                    }
+//                    if (responseElement.getAsJsonObject().get("email") != null && !"".equals(responseElement.getAsJsonObject().get("email").getAsString())) {
+//                        builder.email(responseElement.getAsJsonObject().get("email").getAsString());
+//                    }
+//                    if (responseElement.getAsJsonObject().get("name") != null && !"".equals(responseElement.getAsJsonObject().get("name").getAsString())) {
+//                        builder.name(responseElement.getAsJsonObject().get("name").getAsString());
+//                    }
+//
+//                    return builder.build();
+//                }
+//            }
+//        }
+//
+//        return null;
+//    }
 
     /**
      * 카카오 사용자 정보 조회
@@ -739,45 +739,45 @@ public class UserService extends AbstractService implements UserDetailsService {
      * @param token 토큰
      * @return String[] 카카오 사용자 정보
      */
-    private SocialUserResponseDto getKakaoUserInfo(String token) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + token);
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
-
-        ResponseEntity<String> response = restTemplate.exchange(KAKAO_USER_INFO_URI, HttpMethod.GET, request, String.class);
-
-        if (response.getBody() != null && !"".equals(response.getBody())) {
-            JsonElement element = JsonParser.parseString(response.getBody());
-            JsonObject object = element.getAsJsonObject();
-            JsonElement kakaoAccount = object.get("kakao_account");
-            log.info("kakao oauth2: {}", object.toString());
-
-            String id = object.get("id") != null && !"".equals(object.get("id").getAsString()) ? object.get("id").getAsString() : null;
-
-            if (id != null) {
-                SocialUserResponseDto.SocialUserResponseDtoBuilder builder = SocialUserResponseDto.builder()
-                        .id(id);
-
-                if (kakaoAccount.getAsJsonObject().get("email") != null && !"".equals(kakaoAccount.getAsJsonObject().get("email").getAsString())) {
-                    builder.email(kakaoAccount.getAsJsonObject().get("email").getAsString());
-                }
-                JsonElement profile = kakaoAccount.getAsJsonObject().get("profile");
-                if (profile != null) {
-                    if (profile.getAsJsonObject().get("nickname") != null && !"".equals(profile.getAsJsonObject().get("nickname").getAsString())) {
-                        builder.name(profile.getAsJsonObject().get("nickname").getAsString());
-                    }
-                }
-
-                return builder.build();
-            }
-        }
-
-        return null;
-    }
-
+//    private SocialUserResponseDto getKakaoUserInfo(String token) {
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.set("Authorization", "Bearer " + token);
+//        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+//
+//        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+//        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+//
+//        ResponseEntity<String> response = restTemplate.exchange(KAKAO_USER_INFO_URI, HttpMethod.GET, request, String.class);
+//
+//        if (response.getBody() != null && !"".equals(response.getBody())) {
+//            JsonElement element = JsonParser.parseString(response.getBody());
+//            JsonObject object = element.getAsJsonObject();
+//            JsonElement kakaoAccount = object.get("kakao_account");
+//            log.info("kakao oauth2: {}", object.toString());
+//
+//            String id = object.get("id") != null && !"".equals(object.get("id").getAsString()) ? object.get("id").getAsString() : null;
+//
+//            if (id != null) {
+//                SocialUserResponseDto.SocialUserResponseDtoBuilder builder = SocialUserResponseDto.builder()
+//                        .id(id);
+//
+//                if (kakaoAccount.getAsJsonObject().get("email") != null && !"".equals(kakaoAccount.getAsJsonObject().get("email").getAsString())) {
+//                    builder.email(kakaoAccount.getAsJsonObject().get("email").getAsString());
+//                }
+//                JsonElement profile = kakaoAccount.getAsJsonObject().get("profile");
+//                if (profile != null) {
+//                    if (profile.getAsJsonObject().get("nickname") != null && !"".equals(profile.getAsJsonObject().get("nickname").getAsString())) {
+//                        builder.name(profile.getAsJsonObject().get("nickname").getAsString());
+//                    }
+//                }
+//
+//                return builder.build();
+//            }
+//        }
+//
+//        return null;
+//    }
+//
     /**
      * 소셜 사용자 엔티티 조회
      *
@@ -793,12 +793,12 @@ public class UserService extends AbstractService implements UserDetailsService {
             case "google":
                 user = userRepository.findByGoogleId(providerId);
                 break;
-            case "kakao":
-                user = userRepository.findByKakaoId(providerId);
-                break;
-            case "naver":
-                user = userRepository.findByNaverId(providerId);
-                break;
+//            case "kakao":
+//                user = userRepository.findByKakaoId(providerId);
+//                break;
+//            case "naver":
+//                user = userRepository.findByNaverId(providerId);
+//                break;
             default:
                 user = Optional.empty();
                 break;

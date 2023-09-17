@@ -19,7 +19,26 @@ spring:
       enabled: true
       max-file-size: 10MB
       max-request-size: 50MB
-
+  datasource:
+    url: ${database.url}?serverTimezone=Asia/Seoul&autoReconnect=true&validationQuery=select 1
+    username: msaportal
+    password: msaportal
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  cloud:
+    bus:
+      destination: springCloudBus
+    stream:
+      function:
+        definition: attachmentEntity;busConsumer # 첨부파일 entity 정보 업데이트 하기 위한 이벤트에 대한 consumer function & springcloudbus consumer function
+      bindings:
+        busConsumer-in-0:
+          destination: ${spring.cloud.bus.destination}
+        attachmentEntity-in-0: # 첨부파일 entity 정보 업데이트 하기 위한 이벤트
+          destination: attachment-entity.topic # queue name
+          group: attachment
+        attachmentEntity-out-0: # 첨부파일 entity 정보 업데이트 하기 위한 이벤트
+          destination: attachment-entity.topic # queue name
+          group: attachment
 # config server actuator
 management:
   endpoints:
@@ -35,3 +54,40 @@ info:
 logging:
   level:
     org.egovframe.cloud.portalservice.client: DEBUG   # Feign log를 확인하기 위해 해당 패키지를 디버그 모드로 설정
+database:
+  url: jdbc:mysql://${mysql.hostname:localhost}:3306/msaportal
+
+
+
+# ftp server
+ftp:
+  hostname: 'ftp_server_hostname'
+  username: 'ftp_server_username'
+  password: 'ftp_server_password'
+  port: 21
+  directory: /mnt
+  enabled: false # ftp 사용 여부, FTP 서버에 최상위 디렉토리 자동 생성 및 구현체를 결정하게 된다.
+token:
+  expiration_time: 7200000
+  refresh_time: 86400000
+  secret: 'token_secret'
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}} # random port 사용시 eureka server에 인스턴스가 각각 표시되지 않는다
+    preferIpAddress: true # 서비스간 통신 시 hostname 보다 ip 를 우선
+  client:
+    register-with-eureka: true # eureka 서버에 등록
+    fetch-registry: true # 외부 검색 가능
+    service-url:
+      defaultZone: http://admin:admin@${eureka.instance.hostname:localhost}:8761/eureka
+
+# file attach location - messages{lang}.properties 도 이 경로에 위치한다.
+file:
+  directory: ${app.home:${user.home}}/msa-attach-volume # url 사용시에는 사용되지 않는다
+  url: http://${file.hostname:localhost}:8080 # nginx 로 파일 다운로드 처리
+messages:
+  directory: ${file.directory}/messages
+
+apigateway:
+  host: http://${apigateway.hostname:localhost}:${server.port}

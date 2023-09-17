@@ -10,8 +10,8 @@ spring:
     config:
       server:
         native:
-          search-locations: ${search.location:file:///${user.home}/workspace.edu/egovframe-msa-edu/config} # Windows
-#           search-locations: file://${user.home}/workspace.edu/egovframe-msa-edu/config # MacOS
+          search-locations: ${search.location:file:///C:\eGovFrame-4.1.0/workspace.edu/egovframe-msa-edu/config} # Windows
+#           search-locations: file://${user.home}/workspace.edu/egovframe-msa-edu/config  C:\eGovFrame-4.1.0 # MacOS
   rabbitmq:
     host: ${rabbitmq.hostname:localhost}
     port: 5672
